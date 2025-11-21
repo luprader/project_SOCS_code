@@ -1,0 +1,27 @@
+[project]
+authors = [
+  {name = "Lukas Prader", email = "example@email.com"}
+]
+name = "python-template"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "numpy>=2.3.4",
+    "scipy>=1.16.3",
+    "matplotlib>=3.10.7",
+    "ipykernel>=7.1.0",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.14.2",
+]
+
+[tool.ruff]
+line-length = 88
+indent-width = 4
+
+[tool.ruff.lint]
+extend-select = ["I", "SIM", "D"] # isort, flake8-simplify, pydocstyle
