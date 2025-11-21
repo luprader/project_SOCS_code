@@ -1,6 +1,8 @@
-# Python project template
+# Source code repository for Simulation of Complex Systems
 
-Authors:
+#### Authors:
+[Daniel Peña Fonseca](https://github.com/dpfonseca)
+[Lukas Prader](https://github.com/luprader)
 
 Explain what the project is about and any other things users may need to know.
 
