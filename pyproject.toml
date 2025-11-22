@@ -24,4 +24,4 @@ line-length = 88
 indent-width = 4
 
 [tool.ruff.lint]
-extend-select = ["I", "SIM", "D", "ANN"] # isort, flake8-simplify, pydocstylel, flake8-annotations
+extend-select = ["ANN", "A", "COM", "C4", "ICN", "PIE", "SIM", "I", "NPY", "PD", "N", "PERF", "D"]
