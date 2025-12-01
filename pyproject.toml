@@ -1,10 +1,11 @@
 [project]
 authors = [
-  {name = "Lukas Prader", email = "example@email.com"}
+  {name = "Lukas Prader", email = "prader@student.chalmers.se"},
+    {name = "Daniel Peña Fonseca", email = "danielfo@student.chalmers.se"}
 ]
-name = "python-template"
+name = "project_SOCS"
 version = "0.1.0"
-description = "Add your description here"
+description = "Project for Simulation of Complex Systems"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
