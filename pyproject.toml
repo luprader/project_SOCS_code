@@ -12,6 +12,8 @@ dependencies = [
     "scipy>=1.16.3",
     "matplotlib>=3.10.7",
     "ipykernel>=7.1.0",
+    "pandas>=2.3.3",
+    "openpyxl>=3.1.5",
 ]
 
 [dependency-groups]
