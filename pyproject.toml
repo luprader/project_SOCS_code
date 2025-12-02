@@ -15,6 +15,7 @@ dependencies = [
     "ipykernel>=7.1.0",
     "pandas>=2.3.3",
     "openpyxl>=3.1.5",
+    "tqdm>=4.67.1",
 ]
 
 [dependency-groups]

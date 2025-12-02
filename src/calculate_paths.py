@@ -2,10 +2,12 @@
 
 import os
 import time
+from multiprocessing import Pool
 
 import numpy as np
 import pandas as pd
 import scipy as sp
+from tqdm import tqdm
 
 
 def calculate_k_shortest_paths(patient_number: str, k: int) -> None:
@@ -51,19 +53,39 @@ def calculate_k_shortest_paths(patient_number: str, k: int) -> None:
     np.save(f"output/k_shortest_paths/{patient_number}.npy", path_array)
 
 
+def worker(args):
+    """Wrapper needed for multiprocessing.Pool to unpack args."""
+    patient_number, k = args
+    calculate_k_shortest_paths(patient_number, k)
+    return patient_number
+
+
 # Main execution
-start_time = time.time()
-# read file names from NetworkModelling/data/DTI/
+if __name__ == "__main__":
+    start_time = time.time()
+    # read file names from NetworkModelling/data/DTI/
 
+    patient_numbers = [
+        f.split(".")[0]
+        for f in os.listdir("NetworkModelling/data/DTI/")
+        if f.endswith(".xlsx")
+    ]
 
-patient_numbers = [
-    f.split(".")[0]
-    for f in os.listdir("NetworkModelling/data/DTI/")
-    if f.endswith(".xlsx")
-]
+    already_done = [
+        f.split(".")[0]
+        for f in os.listdir("output/k_shortest_paths/")
+        if f.endswith(".npy")
+    ]
 
-for patient_number in patient_numbers[:3]:
-    calculate_k_shortest_paths(patient_number, 20)
+    not_calculated = list(set(patient_numbers) - set(already_done))
 
-end_time = time.time()
-print(f"Elapsed time: {end_time - start_time} seconds")
+    k_max = 100
+    task_args = [(p, k_max) for p in not_calculated]
+
+    # Run in parallel with a progress bar
+
+    with Pool(6) as p:
+        list(tqdm(p.imap(worker, task_args), total=len(task_args)))
+
+    end_time = time.time()
+    print(f"Elapsed time: {end_time - start_time:.2f} seconds")
