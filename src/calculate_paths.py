@@ -26,7 +26,12 @@ def calculate_k_shortest_paths(patient_number: str, k: int) -> None:
     patient_df = patient_file.parse(sheet_name="Sheet1", header=None)
 
     path_array = np.zeros(
-        (patient_df.shape[0], patient_df.shape[0], k, patient_df.shape[0] + 1),
+        (patient_df.shape[0], patient_df.shape[0], k, patient_df.shape[0]),
+        dtype=np.int32,
+    )
+    distance_array = np.zeros(
+        (patient_df.shape[0], patient_df.shape[0], k),
+        dtype=np.float64,
     )
 
     for i in range(patient_df.shape[0]):
@@ -35,22 +40,23 @@ def calculate_k_shortest_paths(patient_number: str, k: int) -> None:
                 continue
 
             k_shortest_result = sp.sparse.csgraph.yen(
-                patient_df,
+                -np.log(patient_df), # transform weights to distances
                 i,
                 j,
                 k,
                 directed=False,
                 return_predecessors=True,
             )
-            combined_data = np.hstack(
-                (k_shortest_result[0].reshape(-1, 1), k_shortest_result[1]),
-            )
-            if combined_data.size > 0:
-                path_array[i, j] = combined_data
+            path_data = k_shortest_result[1]
+            if path_data.size > 0:
+                path_array[i, j] = path_data
+                distance_array[i, j] = k_shortest_result[0]
 
-    if not os.path.exists("output/k_shortest_paths/"):
-        os.makedirs("output/k_shortest_paths/")
-    np.save(f"output/k_shortest_paths/{patient_number}.npy", path_array)
+    np.savez_compressed(
+        f"output/k_shortest_paths/{patient_number}.npz",
+        path_array=path_array,
+        distance_array=distance_array,
+    )
 
 
 def worker(args):
@@ -71,10 +77,11 @@ if __name__ == "__main__":
         if f.endswith(".xlsx")
     ]
 
+    os.makedirs("output/k_shortest_paths/", exist_ok=True)
     already_done = [
         f.split(".")[0]
         for f in os.listdir("output/k_shortest_paths/")
-        if f.endswith(".npy")
+        if f.endswith(".npz")
     ]
 
     not_calculated = list(set(patient_numbers) - set(already_done))
@@ -84,7 +91,7 @@ if __name__ == "__main__":
 
     # Run in parallel with a progress bar
 
-    with Pool(6) as p:
+    with Pool(4) as p:
         list(tqdm(p.imap(worker, task_args), total=len(task_args)))
 
     end_time = time.time()
