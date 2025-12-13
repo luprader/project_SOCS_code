@@ -77,8 +77,6 @@ def calculate_k_shortest_distances(patient_number: str, k: int) -> np.ndarray:
                 return_predecessors=True,
             )
 
-
-            # If no paths found for this pair, leave nan
             if len(k_path_lengths) == 0:
                 continue
 
@@ -173,12 +171,12 @@ if __name__ == "__main__":
 
     not_calculated = list(set(patient_numbers) - set(already_done))
 
-    k_max = 5
+    k_max = 50
     task_args = [(p, k_max) for p in not_calculated]
 
     # Run in parallel with a progress bar
 
-    with Pool(4) as p:
+    with Pool(6) as p:
         list(tqdm(p.imap(worker, task_args), total=len(task_args)))
 
     end_time = time.time()
