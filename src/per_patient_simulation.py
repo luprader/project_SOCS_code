@@ -1,3 +1,5 @@
+"""Simulates time series and computes correlations for each patient using k-distance matrices for coupling."""
+
 import os
 import time
 from multiprocessing import Pool
@@ -30,7 +32,6 @@ def worker(args):
     patient_fc = np.corrcoef(patient_ts)
     patient_triu = patient_fc[np.triu_indices(patient_fc.shape[0], k=1)]
 
-
     k_results = []
     for k_idx in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 24, 34, 49]:
         adj_mat = 1 / k_distance_array[:, :, k_idx]
@@ -38,7 +39,6 @@ def worker(args):
 
         dist_mat = k_distance_array[:, :, k_idx]
         dist_mat[np.isnan(dist_mat)] = 0  # with kdist isnan
-
 
         phases = run_kuramoto(
             C=adj_mat,
@@ -66,7 +66,6 @@ def worker(args):
 # Main execution
 if __name__ == "__main__":
     start_time = time.time()
-    # read file names from NetworkModelling/data/DTI/
 
     patient_numbers = [
         f.split(".")[0]

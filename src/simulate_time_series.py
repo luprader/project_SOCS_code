@@ -1,8 +1,8 @@
-"""Functions to simulate time series and get functional correlations."""
+"""Functions to simulate time series using a Kuramoto model."""
 
 import numpy as np
 
-# from src.BaloonWindkessel import balloonWindkessel
+
 def run_kuramoto(
     C: np.ndarray,
     distance_matrix: np.ndarray,
@@ -10,8 +10,7 @@ def run_kuramoto(
     total_time: float,
     coupling_factor: float = 18.0,
     noise_factor: float = 1.0,
-    mean_delay: float = 0.0,  # seconds; set to 0 to disable delays
-    # seed: int = 0,
+    mean_delay: float = 0.0,
     initial_phases: np.ndarray | None = None,
 ) -> np.ndarray:
     """Delayed Kuramoto integrator (Euler) with uniform intrinsic frequencies.
@@ -23,7 +22,6 @@ def run_kuramoto(
     coupling_factor: global coupling strength multiplier.
     noise_factor: scaling factor of white noise added to phase derivatives (rad/s).
     mean_delay: mean propagation delay (seconds). Set to 0 to disable delays.
-    seed: RNG seed for reproducibility.
     initial_phases: initial phases of the oscillators (optional, radians).
 
     Returns phases with shape (N, n_steps), in radians.
@@ -32,12 +30,10 @@ def run_kuramoto(
     np.fill_diagonal(C, 0.0)
     N = C.shape[0]
 
-    # Normalize C to mean 1
     C = C / np.mean(C[C > 0])
 
     n_steps = int(total_time / dt)
 
-    # used_seed = seed if seed != 0 else np.random.SeedSequence().entropy
     rng = np.random.default_rng()
 
     # Parameters according to Cabral et al. 2011
@@ -48,35 +44,31 @@ def run_kuramoto(
     )
 
     f = rng.normal(60, 5, N)  # Hz
-    noise = rng.normal(0, 3, (N, n_steps)) # rad/s
+    noise = rng.normal(0, 3, (N, n_steps))  # rad/s
 
     omega = 2 * np.pi * f
 
-    # Noise array
     noise = (
         rng.normal(0, 3, (N, n_steps)) if noise_factor > 0 else np.zeros((N, n_steps))
     )
 
-    # (Delays are disabled here; keep placeholder in case re-enabled)
     if mean_delay > 0 and np.mean(distance_matrix) > 0:
         delay_steps_base = mean_delay / dt
         delay_steps = np.rint(
-            delay_steps_base * distance_matrix / np.mean(distance_matrix)
+            delay_steps_base * distance_matrix / np.mean(distance_matrix),
         ).astype(int)
     else:
         delay_steps = np.zeros_like(distance_matrix, dtype=int)
-
-
 
     phases = np.zeros((N, n_steps), dtype=float)
     phases[:, 0] = theta
 
     for t in range(1, n_steps):
         # Phase difference: theta_j - theta_i (correct sign for attractive coupling)
-        if t-1 < np.max(delay_steps):
-            clipped_delays = np.clip(t-1 - delay_steps, 0, t-1)
+        if t - 1 < np.max(delay_steps):
+            clipped_delays = np.clip(t - 1 - delay_steps, 0, t - 1)
         else:
-            clipped_delays = t-1 - delay_steps  # (N, N)
+            clipped_delays = t - 1 - delay_steps  # (N, N)
 
         delayed_phases = np.take_along_axis(phases, clipped_delays, axis=1)  # (N, N)
 
@@ -92,6 +84,9 @@ def run_kuramoto(
 
     return phases
 
+
+# would require https://github.com/ito-takuya/HemodynamicResponseModeling/tree/master
+# from src.BaloonWindkessel import balloonWindkessel
 
 # def calculate_bold(
 #     time_series: np.ndarray,

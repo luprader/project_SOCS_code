@@ -4,7 +4,9 @@
 [Daniel Peña Fonseca](https://github.com/dpfonseca)
 [Lukas Prader](https://github.com/luprader)
 
-Explain what the project is about and any other things users may need to know.
+This is the code used for simulations and analyses contained in the project "Characterizing Shortest-Path Ensembles for Brain Network Modeling Using Empirical Constraints".
+
+The project was part of the master course "Simulation Of Complex Systems" at Chalmers University of Technology.
 
 ## Project setup and management with uv
 https://docs.astral.sh/uv/
@@ -18,20 +20,9 @@ pipx install uv==0.9.5
 ```bash
 uv sync
 ```
-If the project is version controlled, it is important to add the poetry.lock file to the project repository.
-
-Add dependencies using `uv add packagename`
-
-For compatibility with other tools, one can export the uv.lock to pylock.toml
-
-## Ruff formatter / linter
-https://docs.astral.sh/ruff/
-
-Ruff is part of the `dev` dependency group, which is synced to the workspace by default.
-It can be used in the command line
+### Run project code
+Python scripts can be run using
 ```bash
-uv run ruff check   # Lint all files in the current directory.
-uv run ruff format  # Format all files in the current directory.
+uv run filename.py
 ```
-
-In VSCode, the Ruff extension is sufficient, no other installs are necessary.
+The .ipynb files just need to select the uv .venv as the kernel to run.

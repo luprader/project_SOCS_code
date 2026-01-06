@@ -1,3 +1,5 @@
+"""Calculate average FC and SC matrix from patient data."""
+
 import os
 
 import numpy as np
@@ -17,12 +19,11 @@ average_kdistance = np.zeros((246, 246, 50))
 average_sc = np.zeros_like(average_fc)
 
 for patient_number in tqdm(patient_numbers):
-    k_distances =np.load(f"output/k_shortest_paths/{patient_number}.npz")[
+    k_distances = np.load(f"output/k_shortest_paths/{patient_number}.npz")[
         "k_distance_array"
     ]
     k_distances[np.isnan(k_distances)] = 0
     average_kdistance += k_distances
-
 
     patient_ts = (
         pd.read_excel(
