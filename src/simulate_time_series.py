@@ -15,16 +15,19 @@ def run_kuramoto(
 ) -> np.ndarray:
     """Delayed Kuramoto integrator (Euler) with uniform intrinsic frequencies.
 
-    C: (N,N) coupling matrix (2D). Diagonal is zeroed inside.
-    distance_matrix: (N,N) distance matrix (2D) for computing per-edge delays.
-    dt: timestep (seconds).
-    total_time: total simulation time (seconds).
-    coupling_factor: global coupling strength multiplier.
-    noise_factor: scaling factor of white noise added to phase derivatives (rad/s).
-    mean_delay: mean propagation delay (seconds). Set to 0 to disable delays.
-    initial_phases: initial phases of the oscillators (optional, radians).
+    Args:
+        C: (N,N) coupling matrix (2D). Diagonal is zeroed inside.
+        distance_matrix: (N,N) distance matrix (2D) for computing per-edge delays.
+        dt: timestep (seconds).
+        total_time: total simulation time (seconds).
+        coupling_factor: global coupling strength multiplier.
+        noise_factor: scaling factor of white noise added to phase derivatives (rad/s).
+        mean_delay: mean propagation delay (seconds). Set to 0 to disable delays.
+        initial_phases: initial phases of the oscillators (optional, radians).
 
-    Returns phases with shape (N, n_steps), in radians.
+    Returns:
+        np.ndarray: phases with shape (N, n_steps), in radians.
+
     """
     C = np.array(C, dtype=float)
     np.fill_diagonal(C, 0.0)

@@ -14,9 +14,9 @@ def reconstruct_path(predecessors: np.ndarray, start: int, end: int) -> list[int
     """Reconstruct path from predecessors array.
 
     Args:
-        predecessors (np.ndarray): Array of predecessors from shortest path algorithm.
-        start (int): Starting node index.
-        end (int): Ending node index.
+        predecessors: Array of predecessors from shortest path algorithm.
+        start: Starting node index.
+        end: Ending node index.
 
     Returns:
         list[int]: List of node indices representing the path from start to end.

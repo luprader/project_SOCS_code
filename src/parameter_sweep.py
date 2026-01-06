@@ -1,3 +1,5 @@
+"""Optimizes the scale factor for the Kuramoto model to maximize correlation with patient data."""
+
 import time
 
 import numpy as np
@@ -6,7 +8,22 @@ import scipy as sp
 from simulate_time_series import run_kuramoto
 
 
-def evaluate_simulation_avg(k_list, n_rep, scale_factor):
+def evaluate_simulation_avg(
+    k_list: list[int],
+    n_rep: int,
+    scale_factor: float,
+) -> float:
+    """Evaluate the Kuramoto simulation against patient data.
+
+    Args:
+        k_list: List of k-nearest neighbor indices to evaluate.
+        n_rep: Number of repetitions for each simulation.
+        scale_factor: Scaling factor for the coupling strength.
+
+    Returns:
+        float: Mean Pearson correlation coefficient between simulated and patient functional connectivity.
+
+    """
     k_distance_array = np.load("output/averaged_patient_results.npz")[
         "k_distance_average"
     ]
@@ -15,7 +32,6 @@ def evaluate_simulation_avg(k_list, n_rep, scale_factor):
 
     pearson_list = []
     for k_idx in k_list:
-
         adj_mat = 1 / k_distance_array[:, :, k_idx]
         adj_mat[np.isnan(adj_mat)] = 0
 
@@ -30,7 +46,7 @@ def evaluate_simulation_avg(k_list, n_rep, scale_factor):
                 dt=0.0001,
                 total_time=2,
                 coupling_factor=scale_factor * 18,
-                noise_factor= 1,
+                noise_factor=1,
                 mean_delay=11e-3,
                 # seed=0,
             )
@@ -59,7 +75,12 @@ if __name__ == "__main__":
     klist = [0, 4, 9, 29]
     n_rep = 3
 
-    result = sp.optimize.minimize_scalar(lambda scale_factor: -evaluate_simulation_avg(klist, n_rep, scale_factor), bounds=(0.05, 1), options={"maxiter":10}, method='bounded')
+    result = sp.optimize.minimize_scalar(
+        lambda scale_factor: -evaluate_simulation_avg(klist, n_rep, scale_factor),
+        bounds=(0.05, 1),
+        options={"maxiter": 10},
+        method="bounded",
+    )
 
     end_time = time.time()
     print(f"Elapsed time: {end_time - start_time:.2f} seconds")
